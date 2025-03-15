@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useEcoPoints } from '../contexts/EcoPointsContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function PlantGrowth() {
   const [plants, setPlants] = useState([]);
@@ -18,10 +19,25 @@ export default function PlantGrowth() {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { addPoints } = useEcoPoints();
   const { currentUser, isAdmin } = useAuth();
+  const navigate = useNavigate();
   
   const API_BASE_URL = 'http://localhost:8080';
+
+  // Check if user is authenticated on component mount
+  useEffect(() => {
+    if (!currentUser) {
+      setShowLoginModal(true);
+    }
+  }, [currentUser]);
+
+  // Redirect to login page when the modal is confirmed
+  const handleLoginRedirect = () => {
+    setShowLoginModal(false);
+    navigate('/');  // Redirect to home page where login modal can be opened
+  };
 
   // Function to show notification popup
   const showNotification = (message, type = 'success') => {
@@ -681,6 +697,31 @@ export default function PlantGrowth() {
       </div>
     );
   };
+
+  if (showLoginModal) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+          <h3 className="text-xl font-semibold mb-4 text-black">Login Required</h3>
+          <p className="mb-6 text-black">You need to log in or sign up to access plant growth tracking.</p>
+          <div className="flex justify-end space-x-4">
+            <button 
+              onClick={() => navigate('/')} 
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={handleLoginRedirect} 
+              className="btn btn-primary"
+            >
+              Login / Sign Up
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

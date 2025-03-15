@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Shop() {
@@ -11,6 +13,9 @@ export default function Shop() {
   const [sortOption, setSortOption] = useState('default');
   const [activeTab, setActiveTab] = useState('all'); // Only 'all' tab now
   const { addToCart } = useCart();
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
   const API_BASE_URL = 'http://localhost:8080';
 
@@ -71,6 +76,12 @@ export default function Shop() {
     });
 
   const handleAddToCart = (product) => {
+    if (!currentUser) {
+      // If no user is logged in, show modal or redirect to login
+      setShowLoginModal(true);
+      return;
+    }
+    
     addToCart({
       id: product.id,
       name: product.name,
@@ -82,6 +93,13 @@ export default function Shop() {
       quantity: 1,
       redeemedWithPoints: false
     });
+  };
+
+  // Redirect to login page when the modal is confirmed
+  const handleLoginRedirect = () => {
+    setShowLoginModal(false);
+    // Use navigate from React Router
+    navigate('/');  // Redirect to home page where login modal can be opened
   };
 
   // Helper function to get the correct image URL
@@ -294,6 +312,30 @@ export default function Shop() {
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No products found matching your criteria.</p>
+        </div>
+      )}
+
+      {/* Login Required Modal */}
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4 text-black">Login Required</h3>
+            <p className="mb-6 text-black">You need to log in or sign up to add items to your cart.</p>
+            <div className="flex justify-end space-x-4">
+              <button 
+                onClick={() => setShowLoginModal(false)} 
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleLoginRedirect} 
+                className="btn btn-primary"
+              >
+                Login / Sign Up
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

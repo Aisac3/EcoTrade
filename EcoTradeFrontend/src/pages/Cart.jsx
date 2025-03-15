@@ -29,6 +29,7 @@ export default function Cart() {
     type: 'PET',
     weight: 1
   });
+  const [collectedPlasticDetails, setCollectedPlasticDetails] = useState(null);
   const navigate = useNavigate();
   
   const API_BASE_URL = 'http://localhost:8080';
@@ -115,6 +116,26 @@ export default function Cart() {
     }
   };
 
+  const handlePlasticFormSubmit = (e) => {
+    e.preventDefault();
+    // Store the plastic details and proceed to payment form
+    setCollectedPlasticDetails({...plasticDetails});
+    setShowPlasticForm(false);
+    setShowPaymentForm(true);
+  };
+
+  const handlePaymentFormSubmit = (e) => {
+    e.preventDefault();
+    
+    // If we have collected plastic details, submit with those details
+    if (collectedPlasticDetails) {
+      submitOrder(true, { plasticDetails: collectedPlasticDetails, paymentDetails });
+    } else {
+      // Otherwise this is a regular checkout without plastic
+      submitOrder(false, { paymentDetails });
+    }
+  };
+
   const submitOrder = async (usePlastic = true, additionalData = {}) => {
     setLoading(true);
     setError(null);
@@ -192,6 +213,7 @@ export default function Cart() {
         // Reset forms
         setShowPaymentForm(false);
         setShowPlasticForm(false);
+        setCollectedPlasticDetails(null);
       } catch (axiosError) {
         console.error('Axios error details:', {
           status: axiosError.response?.status,
@@ -207,16 +229,6 @@ export default function Cart() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePaymentFormSubmit = (e) => {
-    e.preventDefault();
-    submitOrder(false, { paymentDetails });
-  };
-
-  const handlePlasticFormSubmit = (e) => {
-    e.preventDefault();
-    submitOrder(true, { plasticDetails });
   };
 
   const handleInputChange = (e, formType) => {
@@ -324,8 +336,16 @@ export default function Cart() {
       {/* Payment Form Modal */}
       {showPaymentForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Shipping & Payment Details</h2>
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h2 className="text-xl font-bold text-black mb-4">Shipping & Payment Details</h2>
+            {collectedPlasticDetails && (
+              <div className="mb-4 p-3 bg-green-50 rounded-md">
+                <p className="text-sm font-medium text-black">
+                  You're recycling {collectedPlasticDetails.weight}kg of {collectedPlasticDetails.type} plastic.
+                  You'll earn approximately {Math.round(collectedPlasticDetails.weight * 10)} EcoPoints.
+                </p>
+              </div>
+            )}
             <form onSubmit={handlePaymentFormSubmit}>
               <div className="space-y-4">
                 <div>
@@ -524,13 +544,13 @@ export default function Cart() {
                     onChange={(e) => handleInputChange(e, 'plastic')}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 text-black"
                   >
-                    <option value="PET">PET (Polyethylene Terephthalate)</option>
-                    <option value="HDPE">HDPE (High-Density Polyethylene)</option>
-                    <option value="PVC">PVC (Polyvinyl Chloride)</option>
-                    <option value="LDPE">LDPE (Low-Density Polyethylene)</option>
-                    <option value="PP">PP (Polypropylene)</option>
-                    <option value="PS">PS (Polystyrene)</option>
-                    <option value="OTHER">Other Plastics</option>
+                    <option value="PET" className="text-black">PET (Polyethylene Terephthalate)</option>
+                    <option value="HDPE" className="text-black">HDPE (High-Density Polyethylene)</option>
+                    <option value="PVC" className="text-black">PVC (Polyvinyl Chloride)</option>
+                    <option value="LDPE" className="text-black">LDPE (Low-Density Polyethylene)</option>
+                    <option value="PP" className="text-black">PP (Polypropylene)</option>
+                    <option value="PS" className="text-black">PS (Polystyrene)</option>
+                    <option value="OTHER" className="text-black">Other Plastics</option>
                   </select>
                 </div>
                 <div>
@@ -568,7 +588,7 @@ export default function Cart() {
                   className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                   disabled={loading}
                 >
-                  {loading ? 'Processing...' : 'Confirm & Place Order'}
+                  {loading ? 'Processing...' : 'Continue to Shipping'}
                 </button>
               </div>
             </form>
