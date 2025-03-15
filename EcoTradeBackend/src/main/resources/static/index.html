@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrade API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c7744;
+            border-bottom: 2px solid #2c7744;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2c7744;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #2c7744;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-block;
+            background: #2c7744;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #1e5530;
+            text-decoration: none;
+        }
+    </style>
+    <script>
+        // Check if we should redirect to the frontend
+        window.onload = function() {
+            // Only redirect if this is a user navigating directly to the page
+            // and not an API call or resource request
+            if (window.location.pathname === '/' || 
+                window.location.pathname === '/marketplace' || 
+                window.location.pathname === '/waste-collection' || 
+                window.location.pathname === '/plant-growth' || 
+                window.location.pathname === '/community' || 
+                window.location.pathname === '/profile' || 
+                window.location.pathname === '/cart') {
+                window.location.href = 'http://localhost:5173' + window.location.pathname;
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>EcoTrade API</h1>
+        <p>Welcome to the EcoTrade API. This is the backend server for the EcoTrade application.</p>
+        
+        <h2>Available Endpoints</h2>
+        <ul>
+            <li><strong>Users:</strong> <a href="/api/users">/api/users</a></li>
+            <li><strong>Products:</strong> <a href="/api/products">/api/products</a></li>
+            <li><strong>Plants:</strong> <a href="/api/products/plants">/api/products/plants</a></li>
+        </ul>
+        
+        <h2>Frontend Application</h2>
+        <p>The frontend application is running at:</p>
+        <a href="http://localhost:5173" class="btn">Go to Frontend</a>
+    </div>
+</body>
+</html> 

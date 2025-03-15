@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .image-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Test Page</h1>
+    <p>This page tests if images can be loaded directly from the server.</p>
+    
+    <div class="image-container">
+        <div class="image-item">
+            <h3>Monstera Plant</h3>
+            <img src="/images/products/610f45f1-ceb0-4566-b838-d9988da27f80.jpg" alt="Monstera Plant">
+            <p>Path: /images/products/610f45f1-ceb0-4566-b838-d9988da27f80.jpg</p>
+        </div>
+        
+        <div class="image-item">
+            <h3>Snake Plant</h3>
+            <img src="/images/products/b0ddcbe5-0e6a-4cb3-8d47-8f60a5633e4c.jpg" alt="Snake Plant">
+            <p>Path: /images/products/b0ddcbe5-0e6a-4cb3-8d47-8f60a5633e4c.jpg</p>
+        </div>
+        
+        <div class="image-item">
+            <h3>Fiddle Leaf Fig</h3>
+            <img src="/images/products/0c8397d0-44ba-41b9-ba04-25a8db41ba02.jpg" alt="Fiddle Leaf Fig">
+            <p>Path: /images/products/0c8397d0-44ba-41b9-ba04-25a8db41ba02.jpg</p>
+        </div>
+    </div>
+</body>
+</html> 
