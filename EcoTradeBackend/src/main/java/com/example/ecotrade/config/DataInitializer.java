@@ -319,14 +319,15 @@ public class DataInitializer {
         
         // Update each product
         for (String productName : imageMap.keySet()) {
-            productRepository.findByName(productName).ifPresent(product -> {
+            List<Product> products = productRepository.findByName(productName);
+            for (Product product : products) {
                 // Only update if the image URL is an external URL or null
                 if (product.getImageUrl() == null || product.getImageUrl().startsWith("http")) {
                     product.setImageUrl(imageMap.get(productName));
                     productRepository.save(product);
-                    System.out.println("Updated image URL for product: " + productName);
+                    System.out.println("Updated image URL for product: " + productName + " (ID: " + product.getId() + ")");
                 }
-            });
+            }
         }
     }
 } 

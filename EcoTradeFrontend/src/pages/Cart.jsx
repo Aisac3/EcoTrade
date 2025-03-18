@@ -90,20 +90,25 @@ export default function Cart() {
 
   // Helper function to get the correct image URL
   const getImageUrl = (imageUrl) => {
+    console.log('Cart - Processing image URL:', imageUrl);
+    
     if (!imageUrl) {
+      console.log('Cart - No image URL provided');
       return null;
     }
     
     // Check if it's an external URL (starts with http or https)
     if (imageUrl.startsWith('http')) {
-      // For external URLs, use a local placeholder instead
-      return null;
+      console.log('Cart - External URL detected');
+      return imageUrl;
     }
     
     // For local paths, prepend the API base URL
     // Make sure the path starts with a slash
     const normalizedPath = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`;
-    return `${API_BASE_URL}${normalizedPath}`;
+    const fullUrl = `${API_BASE_URL}${normalizedPath}`;
+    console.log('Cart - Full image URL:', fullUrl);
+    return fullUrl;
   };
 
   const handleCheckout = async (usePlastic = true) => {
@@ -623,19 +628,27 @@ export default function Cart() {
                   src={getImageUrl(item.imageUrl)}
                   alt={item.name}
                   className="h-full w-full object-cover object-center"
+                  onLoad={() => console.log('Cart - Image loaded successfully:', item.imageUrl)}
                   onError={(e) => {
+                    console.error('Cart - Image failed to load:', item.imageUrl);
+                    console.error('Cart - Full URL that failed:', e.target.src);
                     e.target.onerror = null;
                     e.target.style.display = 'none';
-                    e.target.parentNode.appendChild(
-                      document.createRange().createContextualFragment(
-                        `<div class="h-full w-full flex items-center justify-center bg-green-200 text-green-500">
-                          <div class="flex flex-col items-center justify-center">
-                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-lg font-bold">
-                              ${item.name.split(' ').map(word => word[0]).join('').toUpperCase()}
-                            </div>
+                    
+                    // Create a placeholder with the initials
+                    const initials = item.name.split(' ').map(word => word[0]).join('').toUpperCase();
+                    const placeholderHtml = `
+                      <div class="h-full w-full flex items-center justify-center bg-green-200 text-green-500">
+                        <div class="flex flex-col items-center justify-center">
+                          <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-lg font-bold">
+                            ${initials}
                           </div>
-                        </div>`
-                      )
+                        </div>
+                      </div>
+                    `;
+                    
+                    e.target.parentNode.appendChild(
+                      document.createRange().createContextualFragment(placeholderHtml)
                     );
                   }}
                 />
